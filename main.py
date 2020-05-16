@@ -19,12 +19,11 @@ def main():
     with open(parameter_file) as file:
         parameters = json.load(file)
         world = World(parameters)
-        # world.print_world()
 
         ticks = parameters["ticks"]
         for i in range(ticks):
             # world.print_world()
-            world.run()
+            world.run(i)
 
 
 if __name__ == "__main__":

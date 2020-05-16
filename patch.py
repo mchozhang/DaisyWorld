@@ -30,7 +30,7 @@ class Patch:
     def is_empty(self):
         """
         whether the patch is empty
-        :return: boolean
+        :return: boolean result
         """
         return self.daisy == Patch.EMPTY
 
@@ -55,17 +55,20 @@ class Patch:
         self.daisy_age = 0
         self.daisy = Patch.EMPTY
 
-    def age(self):
+    def age(self, patches):
         """
         the daisy in this patch ages for 1 time step
+        :param patches patches of the world
         """
         self.daisy_age += 1
-        if self.daisy_age > Patch.DAISY_LIFETIME:
+        if self.daisy_age < Patch.DAISY_LIFETIME:
+            self.seed(patches)
+        else:
             self.daisy_dies()
 
-    def sprout(self, patches):
+    def seed(self, patches):
         """
-        a new daisy sprout if temperature permits
+        propagate seed to neighbos if temperature permits
         :param patches: all the patches
         """
         threshold = \
@@ -73,14 +76,16 @@ class Patch:
 
         # probability to obtain a seed from neighbor and grow a new daisy
         if random.uniform(0, 1) < threshold:
-            neighbors = self.get_neighbors(patches)
-            random_neighbor = neighbors[random.randint(0, len(neighbors) - 1)]
-            color = patches[random_neighbor].daisy
+            # neighbors that are empty
+            neighbors = [patches[pos] for pos in self.get_neighbors(patches)
+                         if patches[pos].daisy == Patch.EMPTY]
+            if neighbors:
+                neighbor = neighbors[random.randint(0, len(neighbors) - 1)]
 
-            if color == Patch.BLACK_DAISY:
-                self.grow_black_daisy()
-            elif color == Patch.WHITE_DAISY:
-                self.grow_white_daisy()
+                if self.daisy == Patch.BLACK_DAISY:
+                    neighbor.grow_black_daisy()
+                elif self.daisy == Patch.WHITE_DAISY:
+                    neighbor.grow_white_daisy()
 
     def calculate_temperature(self):
         """

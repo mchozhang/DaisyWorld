@@ -13,7 +13,7 @@ class World:
         white_init_rate = data["white-start"]
         black_init_rate = data["black-start"]
         self.margin = data["margin"]
-        self.area = data["area"]
+        self.area = self.margin ** 2
         Patch.WHITE_ALBEDO = data["white-albedo"]
         Patch.BLACK_ALBEDO = data["black-albedo"]
         Patch.SOLAR_LUMINOSITY = data["solar-luminosity"]
@@ -27,6 +27,8 @@ class World:
         # init global statistics
         self.global_temperature = Patch.INIT_TEMPERATURE
         self.population = white_init_num + black_init_num
+        self.black_num = black_init_num
+        self.white_num = white_init_num
 
         white_indices, black_indices = set(), set()
         while len(white_indices) < white_init_num:
@@ -51,41 +53,41 @@ class World:
                     patch.grow_black_daisy()
                 self.patches[(i, j)] = patch
 
-    def run(self):
+    def run(self, tick):
         """
         the world runs for 1 time step
         """
         temperature = 0
         population = 0
         white, black = 0, 0
+        print("tick:", tick,
+              "temperature:", self.global_temperature,
+              "population:", self.population,
+              "black:", self.black_num,
+              "white:", self.white_num)
 
         for i in range(self.margin):
             for j in range(self.margin):
                 patch = self.patches[(i, j)]
                 patch.calculate_temperature()
-                if patch.is_empty():
-                    patch.sprout(self.patches)
-                else:
-                    patch.age()
+                patch.age(self.patches)
+
+        for i in range(self.margin):
+            for j in range(self.margin):
+                patch = self.patches[(i, j)]
+                temperature += patch.temperature
+                if not patch.is_empty():
+                    population += 1
                     if patch.is_white():
                         white += 1
                     else:
                         black += 1
-                    population += 1
-                temperature += patch.temperature
-
-                # if not patch.is_empty():
-                #     if patch.is_white():
-                #         white += 1
-                #     else:
-                #         black += 1
-                #     population += 1
 
         self.global_temperature = temperature / self.area
-        print("temperature:", self.global_temperature,
-              "population:", population,
-              "black:", black,
-              "white:", white)
+        self.population = population
+        self.black_num = black
+        self.white_num = white
+
 
     def print_world(self):
         """
@@ -126,5 +128,3 @@ class World:
         cells = [str(self.patches[(x, y)])
                  for x in range(self.margin) for y in range(self.margin)]
         print(template.format(*cells))
-
-
