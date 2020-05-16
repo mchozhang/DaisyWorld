@@ -1,0 +1,12 @@
+{
+  "area": 841,
+  "margin": 29,
+  "white-start": 0.2,
+  "black-start": 0.2,
+  "white-albedo": 0.75,
+  "black-albedo": 0.25,
+  "solar-luminosity": 0.8,
+  "surface-albedo": 0.4,
+  "init-temperature": 0,
+  "ticks": 1000
+}
