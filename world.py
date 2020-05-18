@@ -12,13 +12,14 @@ class World:
         # parse initial data from data dictionary
         white_init_rate = data["white-start"]
         black_init_rate = data["black-start"]
-        self.margin = data["margin"]
-        self.area = self.margin ** 2
+        self.length = data["side-length"]
+        self.area = self.length ** 2
         Patch.WHITE_ALBEDO = data["white-albedo"]
         Patch.BLACK_ALBEDO = data["black-albedo"]
         Patch.SOLAR_LUMINOSITY = data["solar-luminosity"]
         Patch.SURFACE_ALBEDO = data["surface-albedo"]
         Patch.INIT_TEMPERATURE = data["init-temperature"]
+        Patch.SIDE_LENGTH = self.length
 
         # initial daisy positions
         white_init_num = int(self.area * white_init_rate)
@@ -43,15 +44,15 @@ class World:
 
         # initial patches
         self.patches = dict()
-        for i in range(self.margin):
-            for j in range(self.margin):
-                patch = Patch(i, j)
-                index = i * self.margin + j
+        for x in range(self.length):
+            for y in range(self.length):
+                patch = Patch(x, y)
+                index = x * self.length + y
                 if index in white_indices:
                     patch.grow_white_daisy()
                 elif index in black_indices:
                     patch.grow_black_daisy()
-                self.patches[(i, j)] = patch
+                self.patches[(x, y)] = patch
 
     def run(self, tick):
         """
@@ -66,15 +67,25 @@ class World:
               "black:", self.black_num,
               "white:", self.white_num)
 
-        for i in range(self.margin):
-            for j in range(self.margin):
-                patch = self.patches[(i, j)]
+        diffusion_counter = dict()
+
+        for x in range(self.length):
+            for y in range(self.length):
+                patch = self.patches[(x, y)]
                 patch.calculate_temperature()
                 patch.age(self.patches)
+                diffusion_counter[(x, y)] = patch.temperature * 0.5
 
-        for i in range(self.margin):
-            for j in range(self.margin):
-                patch = self.patches[(i, j)]
+        for x in range(self.length):
+            for y in range(self.length):
+                patch = self.patches[(x, y)]
+                # diffuse and absorb energy
+                absorbed = sum([diffusion_counter[pos] / 8
+                                for pos in patch.get_neighbors()])
+                diffused = diffusion_counter[(x, y)]
+                patch.temperature = patch.temperature - diffused + absorbed
+
+                # count global values
                 temperature += patch.temperature
                 if not patch.is_empty():
                     population += 1
@@ -87,7 +98,6 @@ class World:
         self.population = population
         self.black_num = black
         self.white_num = white
-
 
     def print_world(self):
         """
@@ -126,5 +136,5 @@ class World:
          y/x  0   1   2   3   4   5   6   7"""
 
         cells = [str(self.patches[(x, y)])
-                 for x in range(self.margin) for y in range(self.margin)]
+                 for x in range(self.length) for y in range(self.length)]
         print(template.format(*cells))

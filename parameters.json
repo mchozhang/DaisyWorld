@@ -1,5 +1,5 @@
 {
-  "margin": 29,
+  "side-length": 29,
   "white-start": 0.2,
   "black-start": 0.2,
   "white-albedo": 0.75,
@@ -7,5 +7,5 @@
   "solar-luminosity": 0.8,
   "surface-albedo": 0.4,
   "init-temperature": 0,
-  "ticks": 50
+  "ticks": 100
 }

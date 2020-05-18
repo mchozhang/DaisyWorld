@@ -14,6 +14,7 @@ class Patch:
     SOLAR_LUMINOSITY = 0
     DAISY_LIFETIME = 25
     INIT_TEMPERATURE = 0
+    SIDE_LENGTH = 0
 
     BLACK_DAISY = 0
     WHITE_DAISY = 1
@@ -38,14 +39,14 @@ class Patch:
         """
         grow a white daisy in this patch
         """
-        self.daisy_age = 0
+        self.daisy_age = random.randint(0, Patch.DAISY_LIFETIME)
         self.daisy = Patch.WHITE_DAISY
 
     def grow_black_daisy(self):
         """
         grow a black daisy in this patch
         """
-        self.daisy_age = 0
+        self.daisy_age = random.randint(0, Patch.DAISY_LIFETIME)
         self.daisy = Patch.BLACK_DAISY
 
     def daisy_dies(self):
@@ -68,20 +69,22 @@ class Patch:
 
     def seed(self, patches):
         """
-        propagate seed to neighbos if temperature permits
+        propagate seed to neighbors if temperature permits
         :param patches: all the patches
         """
+        # parabola with a peak of 1, temperature in range of [5, 40]
+        # will have positive threshold value and probability to propagate seeds
         threshold = \
             0.1457 * self.temperature - 0.0032 * self.temperature ** 2 - 0.6443
 
         # probability to obtain a seed from neighbor and grow a new daisy
         if random.uniform(0, 1) < threshold:
             # neighbors that are empty
-            neighbors = [patches[pos] for pos in self.get_neighbors(patches)
+            neighbors = [patches[pos] for pos in self.get_neighbors()
                          if patches[pos].daisy == Patch.EMPTY]
             if neighbors:
+                # propagate a seed to one of the neighbors
                 neighbor = neighbors[random.randint(0, len(neighbors) - 1)]
-
                 if self.daisy == Patch.BLACK_DAISY:
                     neighbor.grow_black_daisy()
                 elif self.daisy == Patch.WHITE_DAISY:
@@ -117,7 +120,7 @@ class Patch:
         """
         return self.daisy == Patch.WHITE_DAISY
 
-    def get_neighbors(self, patches):
+    def get_neighbors(self):
         """
         get list of neighbor positions
         :param: all the patches
@@ -126,7 +129,15 @@ class Patch:
         dirs = [(-1, -1), (-1, 0), (-1, 1), (0, -1),
                 (0, 1), (1, -1), (1, 0), (1, 1)]
         return [(self.x + dx, self.y + dy)
-                for dx, dy in dirs if (self.x + dx, self.y + dy) in patches]
+                for dx, dy in dirs if Patch.valid_pos(self.x + dx, self.y + dy)]
+
+    @staticmethod
+    def valid_pos(x, y):
+        """
+        whether the position is valid
+        :return: boolean result
+        """
+        return -1 < x < Patch.SIDE_LENGTH and -1 < y < Patch.SIDE_LENGTH
 
     def __repr__(self):
         if self.is_empty():

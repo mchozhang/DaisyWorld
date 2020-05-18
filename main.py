@@ -12,7 +12,6 @@ from world import World
 def main():
     """
     initialize the world from the parameter file
-    :return:
     """
     dir_path = os.path.dirname(os.path.realpath(__file__))
     parameter_file = os.path.join(dir_path, sys.argv[1])
