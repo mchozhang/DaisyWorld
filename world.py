@@ -67,23 +67,22 @@ class World:
               "black:", self.black_num,
               "white:", self.white_num)
 
-        diffusion_counter = dict()
+        # calculate internal temperature of each patch
+        for x in range(self.length):
+            for y in range(self.length):
+                self.patches[(x, y)].calculate_temperature()
 
         for x in range(self.length):
             for y in range(self.length):
                 patch = self.patches[(x, y)]
-                patch.calculate_temperature()
-                patch.age(self.patches)
-                diffusion_counter[(x, y)] = patch.temperature * 0.5
-
-        for x in range(self.length):
-            for y in range(self.length):
-                patch = self.patches[(x, y)]
-                # diffuse and absorb energy
-                absorbed = sum([diffusion_counter[pos] / 8
+                # energy absorbed from neighbors
+                absorbed = sum([self.patches[pos].temperature / 16
                                 for pos in patch.get_neighbors()])
-                diffused = diffusion_counter[(x, y)]
-                patch.temperature = patch.temperature - diffused + absorbed
+                # calculate final temperature after diffusion
+                patch.temperature = patch.temperature * 0.5 + absorbed
+
+                # daisies are aging
+                patch.age(self.patches)
 
                 # count global values
                 temperature += patch.temperature

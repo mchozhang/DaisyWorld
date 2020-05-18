@@ -61,6 +61,9 @@ class Patch:
         the daisy in this patch ages for 1 time step
         :param patches patches of the world
         """
+        if self.is_empty():
+            return
+
         self.daisy_age += 1
         if self.daisy_age < Patch.DAISY_LIFETIME:
             self.seed(patches)
