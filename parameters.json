@@ -7,5 +7,5 @@
   "solar-luminosity": 0.8,
   "surface-albedo": 0.4,
   "init-temperature": 0,
-  "ticks": 200
+  "ticks": 100
 }

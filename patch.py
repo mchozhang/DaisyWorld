@@ -12,7 +12,7 @@ class Patch:
     WHITE_ALBEDO = 0
     BLACK_ALBEDO = 0
     SOLAR_LUMINOSITY = 0
-    DAISY_LIFETIME = 25
+    MAX_AGE = 25
     INIT_TEMPERATURE = 0
     SIDE_LENGTH = 0
 
@@ -35,18 +35,20 @@ class Patch:
         """
         return self.daisy == Patch.EMPTY
 
-    def grow_white_daisy(self):
+    def grow_white_daisy(self, age=0):
         """
         grow a white daisy in this patch
+        :param age initial age
         """
-        self.daisy_age = random.randint(0, Patch.DAISY_LIFETIME)
+        self.daisy_age = age
         self.daisy = Patch.WHITE_DAISY
 
-    def grow_black_daisy(self):
+    def grow_black_daisy(self, age=0):
         """
         grow a black daisy in this patch
+        :param age initial age
         """
-        self.daisy_age = random.randint(0, Patch.DAISY_LIFETIME)
+        self.daisy_age = age
         self.daisy = Patch.BLACK_DAISY
 
     def daisy_dies(self):
@@ -65,7 +67,7 @@ class Patch:
             return
 
         self.daisy_age += 1
-        if self.daisy_age < Patch.DAISY_LIFETIME:
+        if self.daisy_age < Patch.MAX_AGE:
             self.seed(patches)
         else:
             self.daisy_dies()

@@ -7,6 +7,7 @@ import sys
 import os
 import json
 from world import World
+from utils import draw_plot
 
 
 def main():
@@ -23,6 +24,9 @@ def main():
         for i in range(ticks):
             # world.print_world()
             world.run(i)
+
+        # draw a plot
+        draw_plot(world.output())
 
 
 if __name__ == "__main__":

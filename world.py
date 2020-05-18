@@ -30,6 +30,10 @@ class World:
         self.population = white_init_num + black_init_num
         self.black_num = black_init_num
         self.white_num = white_init_num
+        self.global_temperature_list = [Patch.INIT_TEMPERATURE]
+        self.population_list = [white_init_num + black_init_num]
+        self.black_num_list = [black_init_num]
+        self.white_num_list = [white_init_num]
 
         white_indices, black_indices = set(), set()
         while len(white_indices) < white_init_num:
@@ -49,9 +53,11 @@ class World:
                 patch = Patch(x, y)
                 index = x * self.length + y
                 if index in white_indices:
-                    patch.grow_white_daisy()
+                    patch.grow_white_daisy(random.randint(0, Patch.MAX_AGE))
                 elif index in black_indices:
-                    patch.grow_black_daisy()
+                    patch.grow_black_daisy(random.randint(0, Patch.MAX_AGE))
+
+                patch.calculate_temperature()
                 self.patches[(x, y)] = patch
 
     def run(self, tick):
@@ -61,16 +67,14 @@ class World:
         temperature = 0
         population = 0
         white, black = 0, 0
-        print("tick:", tick,
-              "temperature:", self.global_temperature,
-              "population:", self.population,
-              "black:", self.black_num,
-              "white:", self.white_num)
+        # print("tick:", tick,
+        #       "temperature:", self.global_temperature,
+        #       "population:", self.population,
+        #       "black:", self.black_num,
+        #       "white:", self.white_num)
 
-        # calculate internal temperature of each patch
-        for x in range(self.length):
-            for y in range(self.length):
-                self.patches[(x, y)].calculate_temperature()
+        # calculate the internal temperature of each patch
+        self.calculate_temperature()
 
         for x in range(self.length):
             for y in range(self.length):
@@ -78,7 +82,7 @@ class World:
                 # energy absorbed from neighbors
                 absorbed = sum([self.patches[pos].temperature / 16
                                 for pos in patch.get_neighbors()])
-                # calculate final temperature after diffusion
+                # calculate ultimate temperature after diffusion
                 patch.temperature = patch.temperature * 0.5 + absorbed
 
                 # daisies are aging
@@ -97,6 +101,18 @@ class World:
         self.population = population
         self.black_num = black
         self.white_num = white
+        self.global_temperature_list.append(temperature / self.area)
+        self.population_list.append(population)
+        self.black_num_list.append(black)
+        self.white_num_list.append(white)
+
+    def calculate_temperature(self):
+        """
+        each patch calculates its own temperature
+        """
+        for x in range(self.length):
+            for y in range(self.length):
+                self.patches[(x, y)].calculate_temperature()
 
     def print_world(self):
         """
@@ -137,3 +153,11 @@ class World:
         cells = [str(self.patches[(x, y)])
                  for x in range(self.length) for y in range(self.length)]
         print(template.format(*cells))
+
+    def output(self):
+        res = dict()
+        res["temperature"] = self.global_temperature_list
+        res["population"] = self.population_list
+        res["black-num"] = self.black_num_list
+        res["white-num"] = self.white_num_list
+        return res
