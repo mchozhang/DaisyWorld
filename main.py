@@ -26,7 +26,8 @@ def main():
             world.run(i)
 
         # draw a plot
-        draw_plot(world.output())
+        draw_plot(world.result())
+        world.output_csv(os.path.join(dir_path, 'result.csv'))
 
 
 if __name__ == "__main__":

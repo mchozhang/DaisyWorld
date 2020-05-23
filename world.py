@@ -4,6 +4,7 @@
 The daisy world is a square grid within which each patch can grow a daisy.
 """
 import random
+import csv
 from patch import Patch
 
 
@@ -154,10 +155,34 @@ class World:
                  for x in range(self.length) for y in range(self.length)]
         print(template.format(*cells))
 
-    def output(self):
+    def result(self):
+        """
+        get the statistic of every tick in a dictionary
+        :return: dictionary of the running result
+        """
         res = dict()
         res["temperature"] = self.global_temperature_list
         res["population"] = self.population_list
         res["black-num"] = self.black_num_list
         res["white-num"] = self.white_num_list
         return res
+
+    def output_csv(self, path):
+        """
+        output the result as csv file
+        """
+        res = self.result()
+        with open(path, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['tick', 'global-temperature', 'population',
+                             'black-number', 'white-number'])
+
+            for i in range(len(res["temperature"])):
+                row = [i,
+                       res["temperature"][i],
+                       res["population"][i],
+                       res["black-num"][i],
+                       res["white-num"][i]]
+                writer.writerow(row)
+
+
