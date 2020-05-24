@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import matplotlib.pyplot as plt
-import numpy as np
-
 
 def draw_plot(data):
+    try:
+        import matplotlib.pyplot as plt
+    except:
+        return
+
     population = data["population"]
     temperature = data["temperature"]
     black = data["black-num"]
