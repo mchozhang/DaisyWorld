@@ -72,6 +72,24 @@ class Patch:
         else:
             self.daisy_dies()
 
+    def age_render(self, patches):
+        """
+        the daisy in this patch ages for 1 time step
+        :param patches of the world
+        """
+        if self.is_empty():
+            return
+
+        if self.temperature < 30 and self.temperature > 0:
+            self.daisy_age += 1
+        else:
+            self.daisy_age += 0.5
+
+        if self.daisy_age < Patch.MAX_AGE:
+            self.seed(patches)
+        else:
+            self.daisy_dies()
+
     def seed(self, patches):
         """
         propagate seed to neighbors if temperature permits
@@ -85,8 +103,10 @@ class Patch:
         # probability to obtain a seed from neighbor and grow a new daisy
         if random.uniform(0, 1) < threshold:
             # neighbors that are empty
-            neighbors = [patches[pos] for pos in self.get_neighbors()
-                         if patches[pos].daisy == Patch.EMPTY]
+            neighbors = [
+                patches[pos] for pos in self.get_neighbors()
+                if patches[pos].daisy == Patch.EMPTY
+            ]
             if neighbors:
                 # propagate a seed to one of the neighbors
                 neighbor = neighbors[random.randint(0, len(neighbors) - 1)]
@@ -131,10 +151,10 @@ class Patch:
         :param: all the patches
         :return: position list
         """
-        dirs = [(-1, -1), (-1, 0), (-1, 1), (0, -1),
-                (0, 1), (1, -1), (1, 0), (1, 1)]
-        return [(self.x + dx, self.y + dy)
-                for dx, dy in dirs if Patch.valid_pos(self.x + dx, self.y + dy)]
+        dirs = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0),
+                (1, 1)]
+        return [(self.x + dx, self.y + dy) for dx, dy in dirs
+                if Patch.valid_pos(self.x + dx, self.y + dy)]
 
     @staticmethod
     def valid_pos(x, y):
