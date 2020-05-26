@@ -24,5 +24,5 @@ def draw_plot(data):
     ax1.set_ylabel('global temperature')
     ax2.set_xlabel('ticks')
     ax2.set_ylabel('population')
-    plt.legend()
+    plt.legend(loc='upper right')
     plt.show()
