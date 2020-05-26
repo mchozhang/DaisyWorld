@@ -21,6 +21,7 @@ class World:
         Patch.SURFACE_ALBEDO = data["surface-albedo"]
         Patch.INIT_TEMPERATURE = data["init-temperature"]
         Patch.SIDE_LENGTH = self.length
+        Patch.EXTENSION = data["extension"]
         self.mode = data["mode"]
 
         # initialize the number of daisies
@@ -118,6 +119,11 @@ class World:
             if 200 < tick < 400:
                 Patch.SOLAR_LUMINOSITY += 0.005
             elif 600 < tick < 850:
+                Patch.SOLAR_LUMINOSITY -= 0.0025
+        elif self.mode == "cycle":
+            if tick % 100 / 2 == 0:
+                Patch.SOLAR_LUMINOSITY += 0.005
+            else:
                 Patch.SOLAR_LUMINOSITY -= 0.0025
 
     def result(self):

@@ -15,6 +15,8 @@ class Patch:
     MAX_AGE = 25
     INIT_TEMPERATURE = 0
     SIDE_LENGTH = 0
+    INIT_SOIL_QUALITY = 1
+    EXTENSION = 0
 
     BLACK_DAISY = 0
     WHITE_DAISY = 1
@@ -27,6 +29,7 @@ class Patch:
         self.daisy = Patch.EMPTY
         self.daisy_age = 0
         self.temperature = Patch.INIT_TEMPERATURE
+        self.soil_quality = Patch.INIT_SOIL_QUALITY
 
     def is_empty(self):
         """
@@ -64,13 +67,20 @@ class Patch:
         :param patches patches of the world
         """
         if self.is_empty():
-            return
-
-        self.daisy_age += 1
-        if self.daisy_age < Patch.MAX_AGE:
-            self.seed(patches)
+            if Patch.EXTENSION == 1:
+                if self.soil_quality < 1:
+                    self.soil_quality += 0.01
+            else:
+                return
         else:
-            self.daisy_dies()
+            if Patch.EXTENSION == 1:
+                if self.soil_quality > 0.01:
+                    self.soil_quality -= 0.01
+            self.daisy_age += 1
+            if self.daisy_age < Patch.MAX_AGE:
+                self.seed(patches)
+            else:
+                self.daisy_dies()
 
     def seed(self, patches):
         """
@@ -83,7 +93,11 @@ class Patch:
             0.1457 * self.temperature - 0.0032 * self.temperature ** 2 - 0.6443
 
         # probability to obtain a seed from neighbor and grow a new daisy
-        if random.uniform(0, 1) < threshold:
+        if Patch.EXTENSION == 1:
+            probability = random.uniform(0, 1) / self.soil_quality
+        else:
+            probability = random.uniform(0, 1)
+        if probability < threshold:
             # neighbors that are empty
             neighbors = [patches[pos] for pos in self.get_neighbors()
                          if patches[pos].daisy == Patch.EMPTY]
