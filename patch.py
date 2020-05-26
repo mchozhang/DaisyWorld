@@ -27,6 +27,8 @@ class Patch:
         self.daisy = Patch.EMPTY
         self.daisy_age = 0
         self.temperature = Patch.INIT_TEMPERATURE
+        self.daisy_max_age = 0
+        self.count = 0
 
     def is_empty(self):
         """
@@ -35,12 +37,13 @@ class Patch:
         """
         return self.daisy == Patch.EMPTY
 
-    def grow_white_daisy(self, age=0):
+    def grow_white_daisy(self):
         """
         grow a white daisy in this patch
         :param age initial age
         """
-        self.daisy_age = age
+        self.daisy_max_age = random.randint(0, Patch.MAX_AGE)
+        #print("Grow white daisy" + str(self.daisy_max_age))
         self.daisy = Patch.WHITE_DAISY
 
     def grow_black_daisy(self, age=0):
@@ -48,7 +51,8 @@ class Patch:
         grow a black daisy in this patch
         :param age initial age
         """
-        self.daisy_age = age
+        self.daisy_max_age = random.randint(0, Patch.MAX_AGE)
+        #print("Grow black daisy" + str(self.daisy_max_age))
         self.daisy = Patch.BLACK_DAISY
 
     def daisy_dies(self):
@@ -63,32 +67,31 @@ class Patch:
         the daisy in this patch ages for 1 time step
         :param patches patches of the world
         """
+        self.ageupgraded()
         if self.is_empty():
             return
 
         self.daisy_age += 1
-        if self.daisy_age < Patch.MAX_AGE:
+        if self.daisy_age < self.daisy_max_age:
             self.seed(patches)
         else:
             self.daisy_dies()
 
-    def age_render(self, patches):
+    def ageupgraded(self):
         """
         the daisy in this patch ages for 1 time step
         :param patches of the world
         """
         if self.is_empty():
             return
-
-        if self.temperature < 30 and self.temperature > 0:
-            self.daisy_age += 1
+        if self.temperature < 31 and self.temperature > 25:
+            self.count = self.count + 1
         else:
-            self.daisy_age += 0.5
-
-        if self.daisy_age < Patch.MAX_AGE:
-            self.seed(patches)
-        else:
-            self.daisy_dies()
+            self.count = 0
+        if self.count == 5 and self.daisy_max_age < Patch.MAX_AGE:
+            self.daisy_max_age = self.daisy_max_age + 1
+            self.count = 0
+            print("ageUpgraded" + str(self.daisy_max_age))
 
     def seed(self, patches):
         """
