@@ -16,7 +16,7 @@ class Patch:
     INIT_TEMPERATURE = 0
     SIDE_LENGTH = 0
     INIT_SOIL_QUALITY = 1
-    EXTENSION = 0
+    SOIL_QUALITY_MODE = False
 
     BLACK_DAISY = 0
     WHITE_DAISY = 1
@@ -38,21 +38,14 @@ class Patch:
         """
         return self.daisy == Patch.EMPTY
 
-    def grow_white_daisy(self, age=0):
-        """
-        grow a white daisy in this patch
-        :param age initial age
-        """
-        self.daisy_age = age
-        self.daisy = Patch.WHITE_DAISY
-
-    def grow_black_daisy(self, age=0):
+    def grow_daisy(self, age=0, color=0):
         """
         grow a black daisy in this patch
         :param age initial age
+        :param color color of the daisy
         """
         self.daisy_age = age
-        self.daisy = Patch.BLACK_DAISY
+        self.daisy = color
 
     def daisy_dies(self):
         """
@@ -66,21 +59,29 @@ class Patch:
         the daisy in this patch ages for 1 time step
         :param patches patches of the world
         """
+        if Patch.SOIL_QUALITY_MODE:
+            self.soil_quality_changes()
+
         if self.is_empty():
-            if Patch.EXTENSION == 1:
-                if self.soil_quality < 1:
-                    self.soil_quality += 0.01
-            else:
-                return
+            return
+
+        self.daisy_age += 1
+        if self.daisy_age < Patch.MAX_AGE:
+            self.seed(patches)
         else:
-            if Patch.EXTENSION == 1:
-                if self.soil_quality > 0.01:
-                    self.soil_quality -= 0.01
-            self.daisy_age += 1
-            if self.daisy_age < Patch.MAX_AGE:
-                self.seed(patches)
-            else:
-                self.daisy_dies()
+            self.daisy_dies()
+
+    def soil_quality_changes(self):
+        """
+        change soil quality as daisy grows
+        """
+        if self.is_empty() and self.soil_quality < 1:
+            # soil quality increases when no daisy is growing
+            self.soil_quality += 0.01
+
+        elif self.soil_quality > 0.01:
+            # soil quality degrades when a daisy is growing
+            self.soil_quality -= 0.01
 
     def seed(self, patches):
         """
@@ -93,10 +94,10 @@ class Patch:
             0.1457 * self.temperature - 0.0032 * self.temperature ** 2 - 0.6443
 
         # probability to obtain a seed from neighbor and grow a new daisy
-        if Patch.EXTENSION == 1:
+        probability = random.uniform(0, 1)
+        if Patch.SOIL_QUALITY_MODE:
             probability = random.uniform(0, 1) / self.soil_quality
-        else:
-            probability = random.uniform(0, 1)
+
         if probability < threshold:
             # neighbors that are empty
             neighbors = [patches[pos] for pos in self.get_neighbors()
@@ -104,10 +105,7 @@ class Patch:
             if neighbors:
                 # propagate a seed to one of the neighbors
                 neighbor = neighbors[random.randint(0, len(neighbors) - 1)]
-                if self.daisy == Patch.BLACK_DAISY:
-                    neighbor.grow_black_daisy()
-                elif self.daisy == Patch.WHITE_DAISY:
-                    neighbor.grow_white_daisy()
+                neighbor.grow_daisy(color=self.daisy)
 
     def calculate_temperature(self):
         """
