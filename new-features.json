@@ -10,5 +10,5 @@
   "ticks": 500,
   "mode": "normal",
   "soil-quality-mode": true,
-  "flexible-daisy-lifetime": true
+  "flexible-daisy-lifetime": false
 }

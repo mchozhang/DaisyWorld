@@ -133,3 +133,4 @@ dmypy.json
 
 # project
 result.csv
+result*.csv

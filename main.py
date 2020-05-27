@@ -23,14 +23,16 @@ def main():
         # run for the specified tick time
         ticks = parameters["ticks"]
         for i in range(ticks):
-            #world.print_world()
             world.run(i)
 
         # draw a plot if matplotlib has been installed
         draw_plot(world.result())
 
         # output the result to a csv file
-        world.output_csv(os.path.join(dir_path, 'result.csv'))
+        output_filename = 'result.csv'
+        if len(sys.argv) == 3:
+            output_filename = sys.argv[2]
+        world.output_csv(os.path.join(dir_path, output_filename))
 
 
 if __name__ == "__main__":
