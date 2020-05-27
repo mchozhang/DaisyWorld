@@ -23,6 +23,7 @@ def main():
         # run for the specified tick time
         ticks = parameters["ticks"]
         for i in range(ticks):
+            #world.print_world()
             world.run(i)
 
         # draw a plot if matplotlib has been installed

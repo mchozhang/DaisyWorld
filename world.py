@@ -21,7 +21,6 @@ class World:
         Patch.SURFACE_ALBEDO = data["surface-albedo"]
         Patch.INIT_TEMPERATURE = data["init-temperature"]
         Patch.SIDE_LENGTH = self.length
-        Patch.SOIL_QUALITY_MODE = data["soil-quality-mode"]
         self.mode = data["mode"]
 
         # initialize the number of daisies
@@ -30,7 +29,6 @@ class World:
 
         # init global statistics
         # index of the list indicates the tick number of the statistics
-        self.luminosity_list = [Patch.SOLAR_LUMINOSITY]
         self.global_temperature_list = [Patch.INIT_TEMPERATURE]
         self.population_list = [white_init_num + black_init_num]
         self.black_num_list = [black_init_num]
@@ -54,11 +52,10 @@ class World:
             for y in range(self.length):
                 patch = Patch(x, y)
                 index = x * self.length + y
-                random_age = random.randint(0, Patch.MAX_AGE)
                 if index in white_indices:
-                    patch.grow_daisy(random_age, Patch.WHITE_DAISY)
+                    patch.grow_white_daisy(random.randint(0, Patch.MAX_AGE))
                 elif index in black_indices:
-                    patch.grow_daisy(random_age, Patch.BLACK_DAISY)
+                    patch.grow_black_daisy(random.randint(0, Patch.MAX_AGE))
 
                 patch.calculate_temperature()
                 self.patches[(x, y)] = patch
@@ -99,7 +96,6 @@ class World:
         self.adjust_solar_luminosity(tick)
 
         # record data
-        self.luminosity_list.append(Patch.SOLAR_LUMINOSITY)
         self.global_temperature_list.append(temperature / self.area)
         self.population_list.append(population)
         self.black_num_list.append(black)
@@ -115,7 +111,7 @@ class World:
 
     def adjust_solar_luminosity(self, tick):
         """
-        change the solar luminosity based on the current mode
+        change the solar luminosity as needed
         :param tick: the tick number
         """
         if self.mode == "ramp-up-ramp-down":
@@ -124,19 +120,12 @@ class World:
             elif 600 < tick < 850:
                 Patch.SOLAR_LUMINOSITY -= 0.0025
 
-        elif self.mode == "cycle":
-            if tick % 100 / 2 == 0:
-                Patch.SOLAR_LUMINOSITY += 0.005
-            else:
-                Patch.SOLAR_LUMINOSITY -= 0.0025
-
     def result(self):
         """
         get the statistic of every tick in a dictionary
         :return: dictionary of the running result
         """
         res = dict()
-        res["luminosity"] = self.luminosity_list
         res["temperature"] = self.global_temperature_list
         res["population"] = self.population_list
         res["black-num"] = self.black_num_list
@@ -150,12 +139,11 @@ class World:
         res = self.result()
         with open(path, 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['tick', 'solar-luminosity', 'global-temperature',
-                             'population', 'black-number', 'white-number'])
+            writer.writerow(['tick', 'global-temperature', 'population',
+                             'black-number', 'white-number'])
 
             for i in range(len(res["temperature"])):
                 row = [i,
-                       res["luminosity"][i],
                        res["temperature"][i],
                        res["population"][i],
                        res["black-num"][i],
