@@ -150,8 +150,8 @@ class World:
         res = self.result()
         with open(path, 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['tick', 'solar-luminosity', 'global-temperature', 'population',
-                             'black-number', 'white-number'])
+            writer.writerow(['tick', 'solar-luminosity', 'global-temperature',
+                             'population', 'black-number', 'white-number'])
 
             for i in range(len(res["temperature"])):
                 row = [i,
