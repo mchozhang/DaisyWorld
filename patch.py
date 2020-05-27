@@ -83,7 +83,7 @@ class Patch:
 
     def daisy_lifetime_changes(self):
         """
-        daisy lifetime changes as temperatrue changes
+        daisy lifetime changes as the temperature changes
         """
         if 18 < self.temperature < 25:
             # daisy lifetime increases when temperature is livable
@@ -94,6 +94,7 @@ class Patch:
         else:
             # daisy lifetime decreases when temperature is unlivable
             self.daisy_lifetime -= 1
+            self.lifetime_bonus = 0
 
     def soil_quality_changes(self):
         """
