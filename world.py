@@ -14,7 +14,7 @@ class World:
         white_init_rate = data["white-start"]
         black_init_rate = data["black-start"]
         self.length = data["side-length"]
-        self.area = self.length**2
+        self.area = self.length ** 2
         Patch.WHITE_ALBEDO = data["white-albedo"]
         Patch.BLACK_ALBEDO = data["black-albedo"]
         Patch.SOLAR_LUMINOSITY = data["solar-luminosity"]
@@ -53,9 +53,9 @@ class World:
                 patch = Patch(x, y)
                 index = x * self.length + y
                 if index in white_indices:
-                    patch.grow_white_daisy()
+                    patch.grow_white_daisy(random.randint(0, Patch.MAX_AGE))
                 elif index in black_indices:
-                    patch.grow_black_daisy()
+                    patch.grow_black_daisy(random.randint(0, Patch.MAX_AGE))
 
                 patch.calculate_temperature()
                 self.patches[(x, y)] = patch
@@ -75,10 +75,8 @@ class World:
             for y in range(self.length):
                 patch = self.patches[(x, y)]
                 # energy absorbed from neighbors
-                absorbed = sum([
-                    self.patches[pos].temperature / 16
-                    for pos in patch.get_neighbors()
-                ])
+                absorbed = sum([self.patches[pos].temperature / 16
+                                for pos in patch.get_neighbors()])
                 # calculate ultimate temperature after diffusion
                 patch.temperature = patch.temperature * 0.5 + absorbed
 
@@ -141,14 +139,15 @@ class World:
         res = self.result()
         with open(path, 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([
-                'tick', 'global-temperature', 'population', 'black-number',
-                'white-number'
-            ])
+            writer.writerow(['tick', 'global-temperature', 'population',
+                             'black-number', 'white-number'])
 
             for i in range(len(res["temperature"])):
-                row = [
-                    i, res["temperature"][i], res["population"][i],
-                    res["black-num"][i], res["white-num"][i]
-                ]
+                row = [i,
+                       res["temperature"][i],
+                       res["population"][i],
+                       res["black-num"][i],
+                       res["white-num"][i]]
                 writer.writerow(row)
+
+

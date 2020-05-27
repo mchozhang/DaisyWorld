@@ -8,5 +8,6 @@
   "surface-albedo": 0.4,
   "init-temperature": 0,
   "ticks": 500,
-  "mode": "customized"
+  "mode": "normal",
+  "soil-quality-mode": true
 }
