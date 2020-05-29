@@ -8,37 +8,49 @@ import random
 
 
 class Patch:
-    # the albedo(percentage of solar energy absorbed) of empty patches and both daisies
+    # the albedo(percentage of solar energy absorbed) of empty patches
     SURFACE_ALBEDO = 0
     WHITE_ALBEDO = 0
     BLACK_ALBEDO = 0
+
     # solar energy
     SOLAR_LUMINOSITY = 0
+
     # max age for all daisies
     MAX_AGE = 25
+
     # temperature of the world
     INIT_TEMPERATURE = 0
+
     # the size of the world
     SIDE_LENGTH = 0
+
     # extension parameters
     INIT_SOIL_QUALITY = 1
     SOIL_QUALITY_MODE = False
     FLEXIBLE_DAISY_LIFETIME = False
 
+    # types of daisy
     BLACK_DAISY = 0
     WHITE_DAISY = 1
     EMPTY = 2
 
     def __init__(self, x, y):
-        # initialize all attributes for each patch
+        # position attributes
         self.x = x
         self.y = y
         self.pos = (x, y)
+
+        # daisy attributes
         self.daisy = Patch.EMPTY
         self.daisy_age = 0
         self.daisy_lifetime = Patch.MAX_AGE
         self.lifetime_bonus = 0
+
+        # temperature of the patch
         self.temperature = Patch.INIT_TEMPERATURE
+
+        # soil quality, only useful when the mode is turned on
         self.soil_quality = Patch.INIT_SOIL_QUALITY
 
     def is_empty(self):
@@ -187,8 +199,3 @@ class Patch:
         :return: boolean result
         """
         return -1 < x < Patch.SIDE_LENGTH and -1 < y < Patch.SIDE_LENGTH
-
-    def __repr__(self):
-        if self.is_empty():
-            return "   "
-        return " ❍ " if self.is_white() else " ✺ "

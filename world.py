@@ -11,31 +11,32 @@ from patch import Patch
 class World:
     def __init__(self, data):
         # parse initial data from data dictionary
-        # initialize the starting percentage of white and black daisies in the world
+        # initial percentage of white and black daisies in the world
         white_init_rate = data["white-start"]
         black_init_rate = data["black-start"]
-        # set the size of the world area
+
+        # set the size of the world
         self.length = data["side-length"]
         self.area = self.length ** 2
-        # set the albedo(percentage of heat energy absorbed) for both daisies and empty patch
+
+        # set the behaviour mode
+        self.mode = data["mode"]
+
+        # initialize constants of class Patch
         Patch.WHITE_ALBEDO = data["white-albedo"]
         Patch.BLACK_ALBEDO = data["black-albedo"]
         Patch.SURFACE_ALBEDO = data["surface-albedo"]
-        # set the starting solar energy and the temperature of the world
         Patch.SOLAR_LUMINOSITY = data["solar-luminosity"]
         Patch.INIT_TEMPERATURE = data["init-temperature"]
         Patch.SIDE_LENGTH = self.length
-        # choose whether or not to use the extension parameters by input data
         Patch.SOIL_QUALITY_MODE = data["soil-quality-mode"]
         Patch.FLEXIBLE_DAISY_LIFETIME = data["flexible-daisy-lifetime"]
-        # set the behaviour mode
-        self.mode = data["mode"]
 
         # initialize the number of daisies
         white_init_num = int(self.area * white_init_rate)
         black_init_num = int(self.area * black_init_rate)
 
-        # init global statistics
+        # init global statistics, which will be output as results
         # index of the list indicates the tick number of the statistics
         self.luminosity_list = [Patch.SOLAR_LUMINOSITY]
         self.global_temperature_list = [Patch.INIT_TEMPERATURE]
@@ -61,7 +62,6 @@ class World:
             for y in range(self.length):
                 patch = Patch(x, y)
                 index = x * self.length + y
-                # each daisy has an individual max age no longer than Patch.MAX_AGE
                 random_age = random.randint(0, Patch.MAX_AGE)
                 if index in white_indices:
                     patch.grow_daisy(random_age, Patch.WHITE_DAISY)
@@ -126,7 +126,7 @@ class World:
         change the solar luminosity based on the current mode
         :param tick: the tick number
         """
-        # in this mode, the solar energy first goes up and waits for a period then goes down
+        # the solar energy first goes up, waits for a period then goes down
         if self.mode == "ramp-up-ramp-down":
             if 200 < tick < 400:
                 Patch.SOLAR_LUMINOSITY += 0.005
@@ -135,7 +135,7 @@ class World:
 
         # the solar energy will goes up then down repeatedly each for 100 ticks
         elif self.mode == "cycle":
-            if tick % 100 / 2 == 0:
+            if tick // 100 // 2 == 0:
                 Patch.SOLAR_LUMINOSITY += 0.005
             else:
                 Patch.SOLAR_LUMINOSITY -= 0.0025
