@@ -9,6 +9,6 @@
   "init-temperature": 0,
   "ticks": 500,
   "mode": "ramp-up-ramp-down",
-  "soil-quality-mode": false,
+  "soil-quality-mode": true,
   "flexible-daisy-lifetime": false
 }
