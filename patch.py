@@ -8,13 +8,19 @@ import random
 
 
 class Patch:
+    # the albedo(percentage of solar energy absorbed) of empty patches and both daisies
     SURFACE_ALBEDO = 0
     WHITE_ALBEDO = 0
     BLACK_ALBEDO = 0
+    # solar energy
     SOLAR_LUMINOSITY = 0
+    # max age for all daisies
     MAX_AGE = 25
+    # temperature of the world
     INIT_TEMPERATURE = 0
+    # the size of the world
     SIDE_LENGTH = 0
+    # extension parameters
     INIT_SOIL_QUALITY = 1
     SOIL_QUALITY_MODE = False
     FLEXIBLE_DAISY_LIFETIME = False
@@ -24,6 +30,7 @@ class Patch:
     EMPTY = 2
 
     def __init__(self, x, y):
+        # initialize all attributes for each patch
         self.x = x
         self.y = y
         self.pos = (x, y)
