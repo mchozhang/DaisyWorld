@@ -159,19 +159,3 @@ daisies extinct before 200 ticks, because soil degradation makes it difficult to
 and more stochastic.
 
 In general, the extended model is consistent with our hypothesis.
-
-## Appendix
-
-* task allocation
-
-| member    |  task    |
-| ---- | ---- |
-|  Wenhao Zhang  |  Model implementation, proofread report |
-|  Xin Li    |  Experiment design, data analysis, report writing |
-|  Juntao Wu    | Code refactoring, new feature design and implementation |
-
-* team meeting: once a week on zoom to discuss the progression.
-* code repository: github is used 
-* changes to proposal
-The definition of classes and methods have changed, in the implementation, only class `World` and `Patch` are kept,
-and the methods in them are changed as we know better about the model.
