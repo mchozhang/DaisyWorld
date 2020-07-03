@@ -1,7 +1,4 @@
 # Daisy World
-Wenhao Zhang, 970012  
-Xin Li, 956468  
-Juntao Wu, 936983  
 
 ## Daisy World Background
 The aim of this study is to replicate and extend a complex system and compare the difference between the replication and
