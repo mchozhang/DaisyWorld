@@ -1,7 +1,4 @@
 # Daisy World
-Wenhao Zhang, 970012  
-Xin Li, 956468  
-Juntao Wu, 936983  
 
 ## Daisy World Background
 The aim of this study is to replicate and extend a complex system and compare the difference between the replication and
@@ -65,7 +62,7 @@ around 6 degrees.
 We used Python to replicate the daisy world which has exactly two types of daisies and one factor that affects the world, 
 the sunlight.
 
-### Python function and classes
+### Python Functions and Classes
 * `main.py`   
 The main function which reads the configurable parameters from a json file, initializes and runs the daisy world program.
 
@@ -84,17 +81,17 @@ The configuration is defined in a json file, in which the input parameters can b
 * `white-albedo`, `black-albedo`, `surface-albedo`: albedo of white daisy, black daisy and patch surface respectively.
 
 ### How to Run
-Run with the main function with the configuration file as the parameter, output the result in `result.csv`, for example:
+Run with the main function with the configuration file as the parameter, result will be output in `result.csv`, for example:
 
 ```
-python main.py standard.json
+python3 main.py standard.json
 ```
 
 Configuration for ramp-up-ramp-down mode and new feature mode are provided in `ramp-up-ramp-down.json` and `new-features.json`. 
 Noted that the configuration file must be in the same folder with `main.py`.
 
 ### Result Analysis
-By running the script `multiple_run.py`, we can repeatedly generate running results, which are shown below: 
+By running the script `multiple_run.py`, we can collectively generate multiple running results, which are shown below: 
 #### Fix Luminosity
 
 <center>Table 3: Replicated model result with fixed solar-luminosity</center>
@@ -162,19 +159,3 @@ daisies extinct before 200 ticks, because soil degradation makes it difficult to
 and more stochastic.
 
 In general, the extended model is consistent with our hypothesis.
-
-## Appendix
-
-* task allocation
-
-| member    |  task    |
-| ---- | ---- |
-|  Wenhao Zhang  |  Model implementation, proofread report |
-|  Xin Li    |  Experiment design, data analysis, report writing |
-|  Juntao Wu    | Code refactoring, new feature design and implementation |
-
-* team meeting: once a week on zoom to discuss the progression.
-* code repository: github is used 
-* changes to proposal
-The definition of classes and methods have changed, in the implementation, only class `World` and `Patch` are kept,
-and the methods in them are changed as we know better about the model.
